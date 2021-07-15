@@ -29,9 +29,9 @@ def main():
     weight = torch.load(cfg.DIR.BEST_MODEL + cfg.TEST.WEIGHT)
     model.to(device=device)
     model.load_state_dict(weight)
-    val_loader = make_data_loader(cfg, inference=True)
+    test_loader = make_data_loader(cfg, inference=True)
 
-    inference(cfg, model, val_loader)
+    inference(cfg, model, test_loader)
 
 
 if __name__ == '__main__':

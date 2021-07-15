@@ -102,7 +102,7 @@ _C.SOLVER.IMS_PER_BATCH = 16
 # see 2 images per batch
 _C.TEST = CN()
 _C.TEST.IMS_PER_BATCH = 16
-_C.TEST.WEIGHT = "/Model_CIFAR_100.pth"
+_C.TEST.WEIGHT = "/Model_CIFAR100_1.pth"
 
 # ---------------------------------------------------------------------------- #
 # Outputs

@@ -35,7 +35,7 @@ def train(cfg):
 
     optimizer = make_optimizer(cfg=cfg,
                                model_params=model.parameters(),
-                               opt='ADAM')
+                               opt='SGD')
     scheduler = None
 
     arguments = {}

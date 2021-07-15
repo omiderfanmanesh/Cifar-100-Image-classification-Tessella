@@ -36,7 +36,7 @@ def inference(
     @evaluator.on(Events.EPOCH_COMPLETED)
     def print_validation_results(engine):
         metrics = evaluator.state.metrics
-        metrics = evaluator.state.metrics
+
 
         _avg_accuracy = metrics['accuracy']
 
