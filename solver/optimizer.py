@@ -1,4 +1,4 @@
-from solver import OptimizerType
+from solver.optimizer_type import OptimizerType
 from .adam import Adam
 from .sgd import SGD
 
