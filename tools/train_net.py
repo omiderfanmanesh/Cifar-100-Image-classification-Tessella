@@ -40,7 +40,7 @@ def train(cfg):
 
     arguments = {}
 
-    train_loader, val_loader = make_data_loader(cfg)
+    train_loader = make_data_loader(cfg)
 
     criterion = nn.CrossEntropyLoss()
 
@@ -48,7 +48,7 @@ def train(cfg):
         cfg,
         model,
         train_loader,
-        val_loader,
+        None,
         optimizer,
         None,
         criterion

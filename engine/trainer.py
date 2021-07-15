@@ -1,14 +1,21 @@
 # encoding: utf-8
 
 import logging
-import os
 from time import time
 
 import numpy as np
 import torch
 from ignite.contrib.handlers import ProgressBar
+from ignite.contrib.handlers.tensorboard_logger import (
+    GradsHistHandler,
+    GradsScalarHandler,
+    TensorboardLogger,
+    WeightsHistHandler,
+    WeightsScalarHandler,
+    global_step_from_engine,
+)
 from ignite.engine import Events, create_supervised_trainer, create_supervised_evaluator
-from ignite.handlers import ModelCheckpoint, Timer, EarlyStopping
+from ignite.handlers import Timer, EarlyStopping
 from ignite.metrics import Accuracy, Loss, RunningAverage, Fbeta
 from ignite.metrics.precision import Precision
 from ignite.metrics.recall import Recall
@@ -20,14 +27,7 @@ from metrics.f1score import F1Score
 from utils import AverageMeter
 from utils import utilities
 from utils.utilities import log_result
-from ignite.contrib.handlers.tensorboard_logger import (
-    GradsHistHandler,
-    GradsScalarHandler,
-    TensorboardLogger,
-    WeightsHistHandler,
-    WeightsScalarHandler,
-    global_step_from_engine,
-)
+
 
 def do_train(
         cfg,
@@ -89,6 +89,7 @@ def train(
         val_f1 = AverageMeter('Validation F1 score', ':6.2f')
 
         end = time()
+        model.train()
         for itr, (data, labels) in enumerate(train_loader):
             data_time.update(time() - end)
             # Transfer Data to GPU if available
@@ -144,8 +145,6 @@ def train(
             f = f1_score(labels.cpu(), predicted.cpu(), average='micro')
             # print(f"f{f}")
             val_f1.update(f)
-
-        model.train()
 
         print(
             f'Epoch {e + 1} [{data_time.avg:.2f}s]\t\t Training Loss: {train_losses.avg:.2f} \t\t '
@@ -203,9 +202,6 @@ def train_ignite(
     trainer_evaluator = create_supervised_evaluator(model, metrics=metrics, device=device)
     trainer_evaluator.logger = setup_logger("Train Evaluator")
 
-    validation_evaluator = create_supervised_evaluator(model, metrics=metrics, device=device)
-    validation_evaluator.logger = setup_logger("Val Evaluator")
-
     timer = Timer(average=True)
 
     # trainer.add_event_handler(Events.EPOCH_COMPLETED, checkpointer, {'model': model,
@@ -242,15 +238,6 @@ def train_ignite(
         metrics = trainer_evaluator.state.metrics
         log_result(title="Training", logger=logger, engine=engine, metrics=metrics)
 
-    if val_loader is not None:
-        @trainer.on(Events.EPOCH_COMPLETED)
-        def log_validation_results(engine):
-            validation_evaluator.run(val_loader)
-            metrics = validation_evaluator.state.metrics
-            log_result(title="Validation", logger=logger, engine=engine, metrics=metrics)
-
-
-
     # adding handlers using `trainer.on` decorator API
     @trainer.on(Events.EPOCH_COMPLETED)
     def print_times(engine):
@@ -258,37 +245,6 @@ def train_ignite(
                     .format(engine.state.epoch, timer.value() * timer.step_count,
                             train_loader.batch_size / timer.value()))
         timer.reset()
-
-    def get_saved_model_path(epoch):
-        return f'{cfg.DIR.BEST_MODEL}/Model_{model_name}_{epoch}.pth'
-
-    best_f1 = 0.
-    best_epoch = 1
-    best_epoch_file = ''
-
-    @trainer.on(Events.EPOCH_COMPLETED)
-    def save_best_epoch_only(engine):
-        epoch = engine.state.epoch
-
-        global best_f1
-        global best_epoch
-        global best_epoch_file
-        best_f1 = 0. if epoch == 1 else best_f1
-        best_epoch = 1 if epoch == 1 else best_epoch
-        best_epoch_file = '' if epoch == 1 else best_epoch_file
-
-        metrics = validation_evaluator.run(val_loader).metrics
-
-        if metrics['f1_micro'] > best_f1:
-            prev_best_epoch_file = get_saved_model_path(best_epoch)
-            if os.path.exists(prev_best_epoch_file):
-                os.remove(prev_best_epoch_file)
-
-            best_f1 = metrics['f1_micro']
-            best_epoch = epoch
-            best_epoch_file = get_saved_model_path(best_epoch)
-            print(f'\nEpoch: {best_epoch} - New best f1_micro! f1_micro: {best_f1}\n\n\n')
-            torch.save(model.state_dict(), best_epoch_file)
 
     tb_logger = TensorboardLogger(log_dir=cfg.DIR.TENSORBOARD_LOG)
 
@@ -300,14 +256,13 @@ def train_ignite(
         metric_names="all",
     )
 
-    for tag, evaluator in [("training", trainer_evaluator), ("validation", validation_evaluator)]:
-        tb_logger.attach_output_handler(
-            evaluator,
-            event_name=Events.EPOCH_COMPLETED,
-            tag=tag,
-            metric_names=["ce_loss", "accuracy"],
-            global_step_transform=global_step_from_engine(trainer),
-        )
+    tb_logger.attach_output_handler(
+        trainer_evaluator,
+        event_name=Events.EPOCH_COMPLETED,
+        tag="training",
+        metric_names=["ce_loss", "accuracy"],
+        global_step_transform=global_step_from_engine(trainer),
+    )
 
     tb_logger.attach_opt_params_handler(trainer, event_name=Events.ITERATION_COMPLETED(every=100), optimizer=optimizer)
 
@@ -318,26 +273,6 @@ def train_ignite(
     tb_logger.attach(trainer, log_handler=GradsScalarHandler(model), event_name=Events.ITERATION_COMPLETED(every=100))
 
     tb_logger.attach(trainer, log_handler=GradsHistHandler(model), event_name=Events.EPOCH_COMPLETED(every=100))
-
-    # tesnorboard(Events=deepcopy(Events),
-    #             model=model,
-    #             metrics=['accuracy', 'precision', 'recall', 'f1', 'f1_micro', 'ce_loss'],
-    #             optimizer=optimizer,
-    #             trainer=trainer,
-    #             evaluator=evaluator,
-    #             log_dir=cfg.DIR.TENSORBOARD_LOG)
-    def score_function(engine):
-        return engine.state.metrics["accuracy"]
-
-    model_checkpoint = ModelCheckpoint(
-        cfg.DIR.OUTPUT_DIR,
-        n_saved=2,
-        filename_prefix="best",
-        score_function=score_function,
-        score_name="validation_accuracy",
-        global_step_transform=global_step_from_engine(trainer),
-    )
-    validation_evaluator.add_event_handler(Events.COMPLETED, model_checkpoint, {"model": model})
 
     trainer.run(train_loader, max_epochs=epochs)
     tb_logger.close()
