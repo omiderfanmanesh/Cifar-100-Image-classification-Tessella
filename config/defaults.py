@@ -23,19 +23,19 @@ _C.MODEL.PRE_TRAINED = True
 # INPUT
 # -----------------------------------------------------------------------------
 _C.INPUT = CN()
-# Size of the image during training
+# Size of the image.jpg during training
 _C.INPUT.SIZE_TRAIN = 32
-# Size of the image during test
+# Size of the image.jpg during test
 _C.INPUT.SIZE_TEST = 32
-# Minimum scale for the image during training
+# Minimum scale for the image.jpg during training
 _C.INPUT.MIN_SCALE_TRAIN = 0.5
-# Maximum scale for the image during test
+# Maximum scale for the image.jpg during test
 _C.INPUT.MAX_SCALE_TRAIN = 1.2
-# Random probability for image horizontal flip
+# Random probability for image.jpg horizontal flip
 _C.INPUT.PROB = 0.5
-# Values to be used for image normalization
+# Values to be used for image.jpg normalization
 _C.INPUT.PIXEL_MEAN = [0.5071, 0.4865, 0.4409]
-# Values to be used for image normalization
+# Values to be used for image.jpg normalization
 _C.INPUT.PIXEL_STD = [0.2673, 0.2564, 0.2762]
 # -----------------------------------------------------------------------------
 # Dataset
@@ -102,7 +102,7 @@ _C.SOLVER.IMS_PER_BATCH = 16
 # see 2 images per batch
 _C.TEST = CN()
 _C.TEST.IMS_PER_BATCH = 16
-_C.TEST.WEIGHT = "/Model_CIFAR100_1.pth"
+_C.TEST.WEIGHT = "/Model_CIFAR100_13.pth"
 
 # ---------------------------------------------------------------------------- #
 # Outputs

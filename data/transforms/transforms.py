@@ -9,13 +9,13 @@ import random
 
 
 class RandomErasing(object):
-    """ Randomly selects a rectangle region in an image and erases its pixels.
+    """ Randomly selects a rectangle region in an image.jpg and erases its pixels.
         'Random Erasing Data Augmentation' by Zhong et al.
         See https://arxiv.org/pdf/1708.04896.pdf
     Args:
          probability: The probability that the Random Erasing operation will be performed.
-         sl: Minimum proportion of erased area against input image.
-         sh: Maximum proportion of erased area against input image.
+         sl: Minimum proportion of erased area against input image.jpg.
+         sh: Maximum proportion of erased area against input image.jpg.
          r1: Minimum aspect ratio of erased area.
          mean: Erasing value.
     """

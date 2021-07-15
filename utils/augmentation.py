@@ -151,7 +151,7 @@ def sparse_image_warp(img_tensor,
 
     # IGNORED FOR OUR BASIC VERSION...
     #     flattened_grid_locations = constant_op.constant(
-    #         _expand_to_minibatch(flattened_grid_locations, batch_size), image.dtype)
+    #         _expand_to_minibatch(flattened_grid_locations, batch_size), image.jpg.dtype)
 
     #     if clamp_boundaries:
     #       (dest_control_point_locations,
@@ -346,34 +346,34 @@ def apply_interpolation(query_points, train_points, w, v, order):
 # Export
 def dense_image_warp(image, flow):
     """Image warping using per-pixel flow vectors.
-    Apply a non-linear warp to the image, where the warp is specified by a dense
+    Apply a non-linear warp to the image.jpg, where the warp is specified by a dense
     flow field of offset vectors that define the correspondences of pixel values
-    in the output image back to locations in the  source image. Specifically, the
+    in the output image.jpg back to locations in the  source image.jpg. Specifically, the
     pixel value at output[b, j, i, c] is
     images[b, j - flow[b, j, i, 0], i - flow[b, j, i, 1], c].
     The locations specified by this formula do not necessarily map to an int
     index. Therefore, the pixel value is obtained by bilinear
     interpolation of the 4 nearest pixels around
     (b, j - flow[b, j, i, 0], i - flow[b, j, i, 1]). For locations outside
-    of the image, we use the nearest pixel values at the image boundary.
+    of the image.jpg, we use the nearest pixel values at the image.jpg boundary.
     Args:
-    image: 4-D float `Tensor` with shape `[batch, height, width, channels]`.
+    image.jpg: 4-D float `Tensor` with shape `[batch, height, width, channels]`.
     flow: A 4-D float `Tensor` with shape `[batch, height, width, 2]`.
     name: A name for the operation (optional).
-    Note that image and flow can be of type tf.half, tf.float32, or tf.float64,
+    Note that image.jpg and flow can be of type tf.half, tf.float32, or tf.float64,
     and do not necessarily have to be the same type.
     Returns:
     A 4-D float `Tensor` with shape`[batch, height, width, channels]`
-    and same type as input image.
+    and same type as input image.jpg.
     Raises:
     ValueError: if height < 2 or width < 2 or the inputs have the wrong number
     of dimensions.
     """
-    image = image.unsqueeze(3)  # add a single channel dimension to image tensor
+    image = image.unsqueeze(3)  # add a single channel dimension to image.jpg tensor
     batch_size, height, width, channels = image.shape
     device = image.device
 
-    # The flow is defined on the image grid. Turn the flow into a list of query
+    # The flow is defined on the image.jpg grid. Turn the flow into a list of query
     # points in the grid space.
     grid_x, grid_y = torch.meshgrid(
         torch.arange(width, device=device), torch.arange(height, device=device))
@@ -386,7 +386,7 @@ def dense_image_warp(image, flow):
     query_points_flattened = torch.reshape(query_points_on_grid,
                                            [batch_size, height * width, 2])
     # Compute values at the query points, then reshape the result back to the
-    # image grid.
+    # image.jpg grid.
     interpolated = interpolate_bilinear(image, query_points_flattened)
     interpolated = torch.reshape(interpolated,
                                  [batch_size, height, width, channels])
@@ -452,7 +452,7 @@ def interpolate_bilinear(grid,
         ceils.append(ceil)
 
         # alpha has the same type as the grid, as we will directly use alpha
-        # when taking linear combinations of pixel values from the image.
+        # when taking linear combinations of pixel values from the image.jpg.
 
         alpha = torch.tensor((queries - floor), dtype=grid_type, device=grid_device)
         min_alpha = torch.tensor(0.0, dtype=grid_type, device=grid_device)
@@ -469,7 +469,7 @@ def interpolate_bilinear(grid,
     batch_offsets = torch.reshape(
         torch.arange(batch_size, device=grid_device) * height * width, [batch_size, 1])
 
-    # This wraps array_ops.gather. We reshape the image data such that the
+    # This wraps array_ops.gather. We reshape the image.jpg data such that the
     # batch, y, and x coordinates are pulled into the first dimension.
     # Then we gather. Finally, we reshape the output back. It's possible this
     # code would be made simpler by using array_ops.gather_nd.
