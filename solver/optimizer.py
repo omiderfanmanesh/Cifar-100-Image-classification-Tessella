@@ -1,3 +1,4 @@
+from solver import OptimizerType
 from .adam import Adam
 from .sgd import SGD
 
@@ -9,9 +10,9 @@ class OptimizerFactory:
         self.model_params = model_params
 
     def get_opt(self):
-        if str(self.opt).upper() == 'ADAM':
+        if self.opt == OptimizerType.ADAM:
             return Adam(self.cfg, self.model_params).optimizer()
-        elif str(self.opt).upper() == 'SGD':
+        elif self.opt == OptimizerType.ADAM:
             return SGD(self.cfg, self.model_params).optimizer()
         else:
             raise ValueError(self.opt)

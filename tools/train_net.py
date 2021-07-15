@@ -10,7 +10,7 @@ from config import cfg
 from data import make_data_loader
 from engine.trainer import do_train
 from modeling import build_model
-from solver import make_optimizer
+from solver import make_optimizer,OptimizerType
 
 from utils.logger import setup_logger
 
@@ -34,8 +34,7 @@ def train(cfg):
     model = build_model(cfg)
 
     optimizer = make_optimizer(cfg=cfg,
-                               model_params=model.parameters(),
-                               opt='SGD')
+                               model_params=model.parameters())
     scheduler = None
 
     arguments = {}

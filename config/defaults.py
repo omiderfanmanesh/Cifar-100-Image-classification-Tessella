@@ -1,5 +1,5 @@
 from yacs.config import CfgNode as CN
-
+from solver.optimizer_type import OptimizerType
 # -----------------------------------------------------------------------------
 # Config definition
 # -----------------------------------------------------------------------------
@@ -19,6 +19,7 @@ _C.MODEL.NUM_CLASSES = 100
 _C.MODEL.NUM_GPU = 1
 _C.MODEL.NAME = 'CIFAR100'
 _C.MODEL.PRE_TRAINED = True
+_C.MODEL.OPTIMIZER = OptimizerType.ADAM
 # -----------------------------------------------------------------------------
 # INPUT
 # -----------------------------------------------------------------------------
@@ -67,7 +68,7 @@ _C.OPT.SGD.NESTEROV = False  # DEFAULT FALSE
 # ------------------------------------------------------------------------------ #
 _C.OPT.ADAM = CN()
 _C.OPT.ADAM.OPTIMIZER_NAME = "ADAM"
-_C.OPT.ADAM.LR = 0.0001  # DEFAULT  0.001
+_C.OPT.ADAM.LR = 0.001  # DEFAULT  0.001
 _C.OPT.ADAM.BETAS = [0.9, 0.999]  # DEFAULT [0.9, 0.999]
 _C.OPT.ADAM.EPS = 1e-08  # DEFAULT 1e-08
 _C.OPT.ADAM.WEIGHT_DECAY = 1e-5  # DEFAULT 0
