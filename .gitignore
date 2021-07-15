@@ -127,10 +127,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-/data/dataset/genres_original/
-/data/dataset/images_original/
-/data/dataset/sub-data/
-/data/dataset/np_data/
-/data/dataset/sub-data/
-/data/dataset/artist20/
 /data/dataset/cifar_100_dataset_file/
