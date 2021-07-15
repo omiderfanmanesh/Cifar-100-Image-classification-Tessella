@@ -3,7 +3,7 @@
 
 import os
 import sys
-from os import mkdir
+from os import mkdir,makedirs
 
 sys.path.append('.')
 from config import cfg
@@ -60,15 +60,15 @@ def main():
 
     output_dir = cfg.DIR.OUTPUT_DIR
     if output_dir and not os.path.exists(output_dir):
-        mkdir(output_dir)
+        makedirs(output_dir)
 
     best_models = cfg.DIR.BEST_MODEL
     if best_models and not os.path.exists(best_models):
-        mkdir(best_models)
+        makedirs(best_models)
 
     tensorboard_log = cfg.DIR.TENSORBOARD_LOG
     if tensorboard_log and not os.path.exists(tensorboard_log):
-        mkdir(tensorboard_log)
+        makedirs(tensorboard_log)
 
     logger = setup_logger("template_model", output_dir, 0)
     logger.info("Using {} GPUS".format(num_gpus))

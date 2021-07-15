@@ -12,14 +12,22 @@ from ignite.handlers import ModelCheckpoint, Timer, EarlyStopping
 from ignite.metrics import Accuracy, Loss, RunningAverage, Fbeta
 from ignite.metrics.precision import Precision
 from ignite.metrics.recall import Recall
+# from utils.utilities import tesnorboard
+from ignite.utils import setup_logger
 from sklearn.metrics import f1_score
 
 from metrics.f1score import F1Score
 from utils import AverageMeter
 from utils import utilities
 from utils.utilities import log_result
-from utils.utilities import tesnorboard
-
+from ignite.contrib.handlers.tensorboard_logger import (
+    GradsHistHandler,
+    GradsScalarHandler,
+    TensorboardLogger,
+    WeightsHistHandler,
+    WeightsScalarHandler,
+    global_step_from_engine,
+)
 
 def do_train(
         cfg,
@@ -183,18 +191,25 @@ def train_ignite(
     F1 = Fbeta(beta=1.0, average=False, precision=precision, recall=recall)
 
     trainer = create_supervised_trainer(model, optimizer, criterion, device=device)
-    evaluator = create_supervised_evaluator(model, metrics={'accuracy': Accuracy(),
-                                                            'precision': precision,
-                                                            'recall': recall,
-                                                            'f1_micro': F1Score(),
-                                                            'f1': F1,
-                                                            'ce_loss': Loss(criterion)}, device=device)
+    trainer.logger = setup_logger("Trainer")
 
-    checkpointer = ModelCheckpoint(output_dir, model_name, n_saved=5, require_empty=False)
+    metrics = {'accuracy': Accuracy(),
+               'precision': precision,
+               'recall': recall,
+               'f1_micro': F1Score(),
+               'f1': F1,
+               'ce_loss': Loss(criterion)}
+
+    trainer_evaluator = create_supervised_evaluator(model, metrics=metrics, device=device)
+    trainer_evaluator.logger = setup_logger("Train Evaluator")
+
+    validation_evaluator = create_supervised_evaluator(model, metrics=metrics, device=device)
+    validation_evaluator.logger = setup_logger("Val Evaluator")
+
     timer = Timer(average=True)
 
-    trainer.add_event_handler(Events.EPOCH_COMPLETED, checkpointer, {'model': model,
-                                                                     'optimizer': optimizer})
+    # trainer.add_event_handler(Events.EPOCH_COMPLETED, checkpointer, {'model': model,
+    #                                                                  'optimizer': optimizer})
 
     timer.attach(trainer, start=Events.EPOCH_STARTED, resume=Events.ITERATION_STARTED,
                  pause=Events.ITERATION_COMPLETED, step=Events.ITERATION_COMPLETED)
@@ -210,7 +225,7 @@ def train_ignite(
 
     early_stopping_handler = EarlyStopping(patience=10, score_function=score_function, trainer=trainer)
 
-    evaluator.add_event_handler(Events.COMPLETED, early_stopping_handler)
+    trainer_evaluator.add_event_handler(Events.COMPLETED, early_stopping_handler)
 
     @trainer.on(Events.ITERATION_COMPLETED)
     def log_training_loss(engine):
@@ -222,17 +237,19 @@ def train_ignite(
 
     @trainer.on(Events.EPOCH_COMPLETED)
     def log_training_results(engine):
-        evaluator.run(train_loader)
+        trainer_evaluator.run(train_loader)
 
-        metrics = evaluator.state.metrics
+        metrics = trainer_evaluator.state.metrics
         log_result(title="Training", logger=logger, engine=engine, metrics=metrics)
 
     if val_loader is not None:
         @trainer.on(Events.EPOCH_COMPLETED)
         def log_validation_results(engine):
-            evaluator.run(val_loader)
-            metrics = evaluator.state.metrics
+            validation_evaluator.run(val_loader)
+            metrics = validation_evaluator.state.metrics
             log_result(title="Validation", logger=logger, engine=engine, metrics=metrics)
+
+
 
     # adding handlers using `trainer.on` decorator API
     @trainer.on(Events.EPOCH_COMPLETED)
@@ -260,7 +277,7 @@ def train_ignite(
         best_epoch = 1 if epoch == 1 else best_epoch
         best_epoch_file = '' if epoch == 1 else best_epoch_file
 
-        metrics = evaluator.run(val_loader).metrics
+        metrics = validation_evaluator.run(val_loader).metrics
 
         if metrics['f1_micro'] > best_f1:
             prev_best_epoch_file = get_saved_model_path(best_epoch)
@@ -273,11 +290,56 @@ def train_ignite(
             print(f'\nEpoch: {best_epoch} - New best f1_micro! f1_micro: {best_f1}\n\n\n')
             torch.save(model.state_dict(), best_epoch_file)
 
+    tb_logger = TensorboardLogger(log_dir=cfg.DIR.TENSORBOARD_LOG)
+
+    tb_logger.attach_output_handler(
+        trainer,
+        event_name=Events.ITERATION_COMPLETED(every=100),
+        tag="training",
+        output_transform=lambda loss: {"batchloss": loss},
+        metric_names="all",
+    )
+
+    for tag, evaluator in [("training", trainer_evaluator), ("validation", validation_evaluator)]:
+        tb_logger.attach_output_handler(
+            evaluator,
+            event_name=Events.EPOCH_COMPLETED,
+            tag=tag,
+            metric_names=["ce_loss", "accuracy"],
+            global_step_transform=global_step_from_engine(trainer),
+        )
+
+    tb_logger.attach_opt_params_handler(trainer, event_name=Events.ITERATION_COMPLETED(every=100), optimizer=optimizer)
+
+    tb_logger.attach(trainer, log_handler=WeightsScalarHandler(model), event_name=Events.ITERATION_COMPLETED(every=100))
+
+    tb_logger.attach(trainer, log_handler=WeightsHistHandler(model), event_name=Events.EPOCH_COMPLETED(every=100))
+
+    tb_logger.attach(trainer, log_handler=GradsScalarHandler(model), event_name=Events.ITERATION_COMPLETED(every=100))
+
+    tb_logger.attach(trainer, log_handler=GradsHistHandler(model), event_name=Events.EPOCH_COMPLETED(every=100))
+
+    # tesnorboard(Events=deepcopy(Events),
+    #             model=model,
+    #             metrics=['accuracy', 'precision', 'recall', 'f1', 'f1_micro', 'ce_loss'],
+    #             optimizer=optimizer,
+    #             trainer=trainer,
+    #             evaluator=evaluator,
+    #             log_dir=cfg.DIR.TENSORBOARD_LOG)
+    def score_function(engine):
+        return engine.state.metrics["accuracy"]
+
+    model_checkpoint = ModelCheckpoint(
+        cfg.DIR.OUTPUT_DIR,
+        n_saved=2,
+        filename_prefix="best",
+        score_function=score_function,
+        score_name="validation_accuracy",
+        global_step_transform=global_step_from_engine(trainer),
+    )
+    validation_evaluator.add_event_handler(Events.COMPLETED, model_checkpoint, {"model": model})
+
     trainer.run(train_loader, max_epochs=epochs)
-
-    tesnorboard(Events=Events, model=model, metrics=['accuracy', 'precision', 'recall', 'f1', 'f1_micro', 'ce_loss'],
-                optimizer=optimizer, trainer=trainer, evaluator=evaluator,
-                log_dir=cfg.DIR.TENSORBOARD_LOG)
-
-    torch.save(model.state_dict(), cfg.DIR.FINAL_MODEL + '/30s_gtzan_no_aug_model_state_dict.pt')
-    torch.save(model, cfg.DIR.FINAL_MODEL + '/30s_gtzan_no_aug_model.pt')
+    tb_logger.close()
+    torch.save(model.state_dict(), cfg.DIR.FINAL_MODEL + '/model_state_dict.pt')
+    torch.save(model, cfg.DIR.FINAL_MODEL + '/model.pt')
