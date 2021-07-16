@@ -1,36 +1,42 @@
-2021-07-16 11:07:05,044 template_model INFO: Using 1 GPUS
-2021-07-16 11:07:07,287 template_model.train INFO: Start training
-2021-07-16 11:07:09,016 template_model.train INFO: Epoch[1] Iteration[100/3125] Loss: 6.62
-2021-07-16 11:07:10,515 template_model.train INFO: Epoch[1] Iteration[200/3125] Loss: 5.12
-2021-07-16 11:07:12,014 template_model.train INFO: Epoch[1] Iteration[300/3125] Loss: 4.91
-2021-07-16 11:07:13,513 template_model.train INFO: Epoch[1] Iteration[400/3125] Loss: 4.85
-2021-07-16 11:07:15,012 template_model.train INFO: Epoch[1] Iteration[500/3125] Loss: 4.81
-2021-07-16 11:07:16,515 template_model.train INFO: Epoch[1] Iteration[600/3125] Loss: 4.82
-2021-07-16 11:07:18,015 template_model.train INFO: Epoch[1] Iteration[700/3125] Loss: 4.84
-2021-07-16 11:07:19,515 template_model.train INFO: Epoch[1] Iteration[800/3125] Loss: 4.82
-2021-07-16 11:07:21,018 template_model.train INFO: Epoch[1] Iteration[900/3125] Loss: 4.83
-2021-07-16 11:07:22,518 template_model.train INFO: Epoch[1] Iteration[1000/3125] Loss: 4.84
-2021-07-16 11:07:24,019 template_model.train INFO: Epoch[1] Iteration[1100/3125] Loss: 4.80
-2021-07-16 11:07:25,520 template_model.train INFO: Epoch[1] Iteration[1200/3125] Loss: 4.78
-2021-07-16 11:07:27,016 template_model.train INFO: Epoch[1] Iteration[1300/3125] Loss: 4.77
-2021-07-16 11:07:28,508 template_model.train INFO: Epoch[1] Iteration[1400/3125] Loss: 4.73
-2021-07-16 11:07:30,004 template_model.train INFO: Epoch[1] Iteration[1500/3125] Loss: 4.74
-2021-07-16 11:07:31,496 template_model.train INFO: Epoch[1] Iteration[1600/3125] Loss: 4.73
-2021-07-16 11:07:33,000 template_model.train INFO: Epoch[1] Iteration[1700/3125] Loss: 4.69
-2021-07-16 11:07:34,510 template_model.train INFO: Epoch[1] Iteration[1800/3125] Loss: 4.68
-2021-07-16 11:07:36,011 template_model.train INFO: Epoch[1] Iteration[1900/3125] Loss: 4.69
-2021-07-16 11:07:37,518 template_model.train INFO: Epoch[1] Iteration[2000/3125] Loss: 4.70
-2021-07-16 11:07:39,018 template_model.train INFO: Epoch[1] Iteration[2100/3125] Loss: 4.74
-2021-07-16 11:07:40,509 template_model.train INFO: Epoch[1] Iteration[2200/3125] Loss: 4.72
-2021-07-16 11:07:42,006 template_model.train INFO: Epoch[1] Iteration[2300/3125] Loss: 4.73
-2021-07-16 11:07:43,505 template_model.train INFO: Epoch[1] Iteration[2400/3125] Loss: 4.70
-2021-07-16 11:07:44,997 template_model.train INFO: Epoch[1] Iteration[2500/3125] Loss: 4.73
-2021-07-16 11:07:46,514 template_model.train INFO: Epoch[1] Iteration[2600/3125] Loss: 4.69
-2021-07-16 11:07:48,027 template_model.train INFO: Epoch[1] Iteration[2700/3125] Loss: 4.79
-2021-07-16 11:07:49,537 template_model.train INFO: Epoch[1] Iteration[2800/3125] Loss: 4.74
-2021-07-16 11:07:51,049 template_model.train INFO: Epoch[1] Iteration[2900/3125] Loss: 4.75
-2021-07-16 11:07:52,554 template_model.train INFO: Epoch[1] Iteration[3000/3125] Loss: 4.64
-2021-07-16 11:07:54,059 template_model.train INFO: Epoch[1] Iteration[3100/3125] Loss: 4.70
-2021-07-16 11:08:10,877 template_model.train INFO: Training Results - Epoch: 1 Avg accuracy: 0.023, precision: 0.001, recall: 0.002, f1 score: 0.001, f1_micro: 0.02, Avg Loss: 5.023 
-2021-07-16 11:08:10,922 template_model.train INFO: Epoch 1 done. Time per batch: 44.028[s] Speed: 1135.6[samples/s]
-2021-07-16 11:08:12,543 template_model.train INFO: Epoch[2] Iteration[100/3125] Loss: 4.63
+2021-07-16 16:53:39,557 template_model INFO: Using 1 GPUS
+2021-07-16 16:53:41,699 template_model.train INFO: Start training
+2021-07-16 16:53:43,203 template_model.train INFO: Epoch[1] Iteration[100/3125] Loss: 8.72
+2021-07-16 16:53:44,480 template_model.train INFO: Epoch[1] Iteration[200/3125] Loss: 5.51
+2021-07-16 16:53:45,762 template_model.train INFO: Epoch[1] Iteration[300/3125] Loss: 5.03
+2021-07-16 16:53:47,054 template_model.train INFO: Epoch[1] Iteration[400/3125] Loss: 4.89
+2021-07-16 16:53:48,351 template_model.train INFO: Epoch[1] Iteration[500/3125] Loss: 4.85
+2021-07-16 16:53:49,687 template_model.train INFO: Epoch[1] Iteration[600/3125] Loss: 4.83
+2021-07-16 16:53:50,980 template_model.train INFO: Epoch[1] Iteration[700/3125] Loss: 4.84
+2021-07-16 16:53:52,268 template_model.train INFO: Epoch[1] Iteration[800/3125] Loss: 4.80
+2021-07-16 16:53:53,557 template_model.train INFO: Epoch[1] Iteration[900/3125] Loss: 4.81
+2021-07-16 16:53:54,890 template_model.train INFO: Epoch[1] Iteration[1000/3125] Loss: 4.81
+2021-07-16 16:53:56,170 template_model.train INFO: Epoch[1] Iteration[1100/3125] Loss: 4.80
+2021-07-16 16:53:57,453 template_model.train INFO: Epoch[1] Iteration[1200/3125] Loss: 4.79
+2021-07-16 16:53:58,747 template_model.train INFO: Epoch[1] Iteration[1300/3125] Loss: 4.78
+2021-07-16 16:54:00,041 template_model.train INFO: Epoch[1] Iteration[1400/3125] Loss: 4.76
+2021-07-16 16:54:01,336 template_model.train INFO: Epoch[1] Iteration[1500/3125] Loss: 4.77
+2021-07-16 16:54:02,625 template_model.train INFO: Epoch[1] Iteration[1600/3125] Loss: 4.77
+2021-07-16 16:54:03,919 template_model.train INFO: Epoch[1] Iteration[1700/3125] Loss: 4.78
+2021-07-16 16:54:05,214 template_model.train INFO: Epoch[1] Iteration[1800/3125] Loss: 4.78
+2021-07-16 16:54:06,505 template_model.train INFO: Epoch[1] Iteration[1900/3125] Loss: 4.77
+2021-07-16 16:54:07,802 template_model.train INFO: Epoch[1] Iteration[2000/3125] Loss: 4.74
+2021-07-16 16:54:09,102 template_model.train INFO: Epoch[1] Iteration[2100/3125] Loss: 4.76
+2021-07-16 16:54:10,391 template_model.train INFO: Epoch[1] Iteration[2200/3125] Loss: 4.76
+2021-07-16 16:54:11,682 template_model.train INFO: Epoch[1] Iteration[2300/3125] Loss: 4.76
+2021-07-16 16:54:12,976 template_model.train INFO: Epoch[1] Iteration[2400/3125] Loss: 4.77
+2021-07-16 16:54:14,282 template_model.train INFO: Epoch[1] Iteration[2500/3125] Loss: 4.76
+2021-07-16 16:54:15,585 template_model.train INFO: Epoch[1] Iteration[2600/3125] Loss: 4.74
+2021-07-16 16:54:16,892 template_model.train INFO: Epoch[1] Iteration[2700/3125] Loss: 4.76
+2021-07-16 16:54:18,231 template_model.train INFO: Epoch[1] Iteration[2800/3125] Loss: 4.74
+2021-07-16 16:54:19,530 template_model.train INFO: Epoch[1] Iteration[2900/3125] Loss: 4.74
+2021-07-16 16:54:20,831 template_model.train INFO: Epoch[1] Iteration[3000/3125] Loss: 4.73
+2021-07-16 16:54:22,131 template_model.train INFO: Epoch[1] Iteration[3100/3125] Loss: 4.76
+2021-07-16 16:54:39,248 template_model.train INFO: Training Results - Epoch: 1 Avg accuracy: 0.010, precision: 0.000, recall: 0.001, f1 score: 0.000, f1_micro: 0.01, Avg Loss: 4.979 
+2021-07-16 16:54:39,295 template_model.train INFO: Epoch 1 done. Time per batch: 37.658[s] Speed: 1327.8[samples/s]
+2021-07-16 16:54:40,704 template_model.train INFO: Epoch[2] Iteration[100/3125] Loss: 4.70
+2021-07-16 16:54:42,052 template_model.train INFO: Epoch[2] Iteration[200/3125] Loss: 4.74
+2021-07-16 16:54:43,434 template_model.train INFO: Epoch[2] Iteration[300/3125] Loss: 4.76
+2021-07-16 16:54:44,777 template_model.train INFO: Epoch[2] Iteration[400/3125] Loss: 4.75
+2021-07-16 16:54:46,085 template_model.train INFO: Epoch[2] Iteration[500/3125] Loss: 4.75
+2021-07-16 16:54:47,386 template_model.train INFO: Epoch[2] Iteration[600/3125] Loss: 4.74
+2021-07-16 16:54:48,687 template_model.train INFO: Epoch[2] Iteration[700/3125] Loss: 4.77

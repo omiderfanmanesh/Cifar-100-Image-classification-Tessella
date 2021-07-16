@@ -19,7 +19,7 @@ _C.MODEL.NUM_CLASSES = 100
 _C.MODEL.NUM_GPU = 1
 _C.MODEL.NAME = 'CIFAR100'
 _C.MODEL.PRE_TRAINED = True
-_C.MODEL.OPTIMIZER = OptimizerType.ADAM
+_C.MODEL.OPTIMIZER = OptimizerType.SGD
 # -----------------------------------------------------------------------------
 # INPUT
 # -----------------------------------------------------------------------------
@@ -59,11 +59,11 @@ _C.OPT = CN()
 _C.OPT.SGD = CN()
 
 _C.OPT.SGD.OPTIMIZER_NAME = "SGD"
-_C.OPT.SGD.LR = 1e-1  # DEFAULT  0.001
+_C.OPT.SGD.LR = 0.1  # DEFAULT  0.001
 _C.OPT.SGD.MOMENTUM = 0.9  # DEFAULT 0
-_C.OPT.SGD.WEIGHT_DECAY = 5e-4  # DEFAULT 0
+_C.OPT.SGD.WEIGHT_DECAY = 0.0001  # DEFAULT 0
 _C.OPT.SGD.DAMPENING = 0  # DEFAULT 0
-_C.OPT.SGD.NESTEROV = False  # DEFAULT FALSE
+_C.OPT.SGD.NESTEROV = True  # DEFAULT FALSE
 
 # ------------------------------------------------------------------------------ #
 _C.OPT.ADAM = CN()
@@ -97,7 +97,7 @@ _C.SOLVER.LOG_PERIOD = 100
 # Number of images per batch
 # This is global, so if we have 8 GPUs and IMS_PER_BATCH = 16, each GPU will
 # see 2 images per batch
-_C.SOLVER.IMS_PER_BATCH = 16
+_C.SOLVER.IMS_PER_BATCH = 512
 
 # This is global, so if we have 8 GPUs and IMS_PER_BATCH = 16, each GPU will
 # see 2 images per batch
