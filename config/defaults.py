@@ -103,13 +103,13 @@ _C.SOLVER.IMS_PER_BATCH = 512
 # see 2 images per batch
 _C.TEST = CN()
 _C.TEST.IMS_PER_BATCH = 16
-_C.TEST.WEIGHT = "/Model_CIFAR100_13.pth"
+_C.TEST.WEIGHT = "/Model_CIFAR100_150.pth"
 
 # ---------------------------------------------------------------------------- #
 # Outputs
 # ---------------------------------------------------------------------------- #
 _C.DIR = CN()
-_C.DIR.OUTPUT_DIR = "../outputs/check_pointers"
+_C.DIR.OUTPUT_DIR = "../outputs/first/check_pointers"
 _C.DIR.TENSORBOARD_LOG = '../outputs/tensorboard_log'
 _C.DIR.BEST_MODEL = '../outputs/best_models'
 _C.DIR.FINAL_MODEL = '../outputs/final_model'

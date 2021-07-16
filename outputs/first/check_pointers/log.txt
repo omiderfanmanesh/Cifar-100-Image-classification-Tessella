@@ -1,0 +1,2 @@
+2021-07-16 21:39:45,766 template_model INFO: Using 1 GPUS
+2021-07-16 21:39:47,896 template_model.train INFO: Start training
