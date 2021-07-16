@@ -12,7 +12,7 @@ class OptimizerFactory:
     def get_opt(self):
         if self.opt == OptimizerType.ADAM:
             return Adam(self.cfg, self.model_params).optimizer()
-        elif self.opt == OptimizerType.ADAM:
+        elif self.opt == OptimizerType.SGD:
             return SGD(self.cfg, self.model_params).optimizer()
         else:
             raise ValueError(self.opt)
