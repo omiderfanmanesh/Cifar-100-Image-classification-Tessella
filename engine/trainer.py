@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 import logging
+import os
 from time import time
 
 import numpy as np
@@ -15,11 +16,11 @@ from ignite.contrib.handlers.tensorboard_logger import (
     global_step_from_engine,
 )
 from ignite.engine import Events, create_supervised_trainer, create_supervised_evaluator
-from ignite.handlers import Timer, EarlyStopping
+from ignite.handlers import ModelCheckpoint,Timer, EarlyStopping
 from ignite.metrics import Accuracy, Loss, RunningAverage, Fbeta
 from ignite.metrics.precision import Precision
 from ignite.metrics.recall import Recall
-# from utils.utilities import tesnorboard
+from utils.utilities import tesnorboard,save_best_epoch_only
 from ignite.utils import setup_logger
 from sklearn.metrics import f1_score
 
@@ -199,13 +200,14 @@ def train_ignite(
                'f1': F1,
                'ce_loss': Loss(criterion)}
 
-    trainer_evaluator = create_supervised_evaluator(model, metrics=metrics, device=device)
-    trainer_evaluator.logger = setup_logger("Train Evaluator")
+    evaluator = create_supervised_evaluator(model, metrics=metrics, device=device)
+    evaluator.logger = setup_logger("Train Evaluator")
 
     timer = Timer(average=True)
 
-    # trainer.add_event_handler(Events.EPOCH_COMPLETED, checkpointer, {'model': model,
-    #                                                                  'optimizer': optimizer})
+    checkpointer = ModelCheckpoint(output_dir, model_name, n_saved=epochs, require_empty=False)
+    trainer.add_event_handler(Events.EPOCH_COMPLETED, checkpointer, {'model': model,
+                                                                     'optimizer': optimizer})
 
     timer.attach(trainer, start=Events.EPOCH_STARTED, resume=Events.ITERATION_STARTED,
                  pause=Events.ITERATION_COMPLETED, step=Events.ITERATION_COMPLETED)
@@ -221,8 +223,8 @@ def train_ignite(
 
     early_stopping_handler = EarlyStopping(patience=10, score_function=score_function, trainer=trainer)
 
-    trainer_evaluator.add_event_handler(Events.COMPLETED, early_stopping_handler)
-    trainer_evaluator.add_event_handler(Events.COMPLETED, scheduler)
+    evaluator.add_event_handler(Events.COMPLETED, early_stopping_handler)
+    evaluator.add_event_handler(Events.COMPLETED, scheduler)
 
     @trainer.on(Events.ITERATION_COMPLETED)
     def log_training_loss(engine):
@@ -234,10 +236,11 @@ def train_ignite(
 
     @trainer.on(Events.EPOCH_COMPLETED)
     def log_training_results(engine):
-        trainer_evaluator.run(train_loader)
-
-        metrics = trainer_evaluator.state.metrics
+        evaluator.run(train_loader)
+        epoch = engine.state.epoch
+        metrics = evaluator.state.metrics
         log_result(title="Training", logger=logger, engine=engine, metrics=metrics)
+        save_best_epoch_only(epoch=epoch,dir=cfg.DIR.BEST_MODEL,model_name=model_name,model=model,metrics=metrics)
 
     # adding handlers using `trainer.on` decorator API
     @trainer.on(Events.EPOCH_COMPLETED)
@@ -258,7 +261,7 @@ def train_ignite(
     )
 
     tb_logger.attach_output_handler(
-        trainer_evaluator,
+        evaluator,
         event_name=Events.EPOCH_COMPLETED,
         tag="training",
         metric_names=["ce_loss", "accuracy"],
@@ -279,3 +282,6 @@ def train_ignite(
     tb_logger.close()
     torch.save(model.state_dict(), cfg.DIR.FINAL_MODEL + '/model_state_dict.pt')
     torch.save(model, cfg.DIR.FINAL_MODEL + '/model.pt')
+
+
+

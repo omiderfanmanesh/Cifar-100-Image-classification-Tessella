@@ -69,6 +69,14 @@ def main():
     if tensorboard_log and not os.path.exists(tensorboard_log):
         makedirs(tensorboard_log)
 
+    final_model = cfg.DIR.FINAL_MODEL
+    if final_model and not os.path.exists(final_model):
+        makedirs(final_model)
+
+    root = cfg.DATASETS.ROOT
+    if root and not os.path.exists(root):
+        makedirs(root)
+
     logger = setup_logger("template_model", output_dir, 0)
     logger.info("Using {} GPUS".format(num_gpus))
 
