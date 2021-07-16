@@ -222,6 +222,7 @@ def train_ignite(
     early_stopping_handler = EarlyStopping(patience=10, score_function=score_function, trainer=trainer)
 
     trainer_evaluator.add_event_handler(Events.COMPLETED, early_stopping_handler)
+    # trainer_evaluator.add_event_handler(Events.COMPLETED, scheduler)
 
     @trainer.on(Events.ITERATION_COMPLETED)
     def log_training_loss(engine):

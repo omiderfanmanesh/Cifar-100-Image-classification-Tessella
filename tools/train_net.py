@@ -10,7 +10,7 @@ from config import cfg
 from data import make_data_loader
 from engine.trainer import do_train
 from modeling import build_model
-from solver import make_optimizer,OptimizerType
+from solver import make_optimizer,scheduler as sch
 
 from utils.logger import setup_logger
 
@@ -35,7 +35,7 @@ def train(cfg):
 
     optimizer = make_optimizer(cfg=cfg,
                                model_params=model.parameters())
-    scheduler = None
+    scheduler = sch(optimizer)
 
     arguments = {}
 
@@ -49,7 +49,7 @@ def train(cfg):
         train_loader,
         None,
         optimizer,
-        None,
+        scheduler,
         criterion
     )
 
