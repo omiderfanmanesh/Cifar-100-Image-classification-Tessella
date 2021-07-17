@@ -206,9 +206,9 @@ def train_ignite(
 
     checkpointer = ModelCheckpoint(output_dir, model_name, n_saved=epochs, require_empty=False)
     trainer.add_event_handler(Events.EPOCH_COMPLETED, checkpointer, {
-                                                                     'model_state_dict': model.state_dict(),
-                                                                     'optimizer_state_dict': optimizer.state_dict(),
-                                                                     'scheduler_state_dict': scheduler.state_dict(),
+                                                                     'model': model,
+                                                                     'optimizer': optimizer,
+                                                                     'scheduler': scheduler,
                                                                      }
                               )
 

@@ -43,8 +43,8 @@ def train(cfg):
 
     criterion = nn.CrossEntropyLoss()
 
-    check_pointers = torch.load('../outputs/first/check_pointers/CIFAR100_checkpoint_468750.pt')
-    model.load_state_dict(check_pointers['model'])
+    # check_pointers = torch.load('../outputs/first/check_pointers/CIFAR100_checkpoint_468750.pt')
+    # model.load_state_dict(check_pointers['model'])
 
     do_train(
         cfg,

@@ -11,7 +11,7 @@ def build_transforms(cfg, is_train=True):
         if cfg.DATASETS.AUGMENTATION:
             transform = T.Compose([
                 RandAugment(n=2, m=9),
-                T.RandomCrop(32, padding=4),
+                # T.RandomCrop(224, padding=4),
                 T.RandomHorizontalFlip(),
                 T.ToTensor(),
                 normalize_transform,

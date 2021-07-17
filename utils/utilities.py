@@ -1,6 +1,8 @@
+import os
+
 import torch
 from ignite.contrib.handlers.tensorboard_logger import *
-import os
+
 
 def accuracy(y_true, y_pred):
     y_true = y_true.float()
@@ -13,7 +15,7 @@ def progress_bar(current, total, barLength=20):
     arrow = '-' * int(percent / 100 * barLength - 1) + '>'
     spaces = ' ' * (barLength - len(arrow))
 
-    print('Progress: [%s%s] %d %%' % (arrow, spaces, percent), end='\r')
+    print('Progress[%d]: [%s%s] %d %%' % (current, arrow, spaces, percent), end='\r')
 
 
 def log_result(title, logger, engine, metrics):
@@ -112,17 +114,16 @@ def tesnorboard(Events, model, optimizer, metrics, trainer, evaluator, log_dir):
     tb_logger.close()
 
 
-
 best_f1 = 0.
 best_epoch = 1
 best_epoch_file = ''
 
 
-def get_saved_model_path(epoch,dir,model_name):
+def get_saved_model_path(epoch, dir, model_name):
     return f'{dir}/Model_{model_name}_{epoch}.pth'
 
 
-def save_best_epoch_only(epoch,dir,model_name, metrics,model):
+def save_best_epoch_only(epoch, dir, model_name, metrics, model):
     global best_f1
     global best_epoch
     global best_epoch_file
@@ -131,12 +132,12 @@ def save_best_epoch_only(epoch,dir,model_name, metrics,model):
     best_epoch_file = '' if epoch == 1 else best_epoch_file
 
     if metrics['accuracy'] > best_f1:
-        prev_best_epoch_file = get_saved_model_path(epoch=best_epoch,dir=dir,model_name=model_name)
+        prev_best_epoch_file = get_saved_model_path(epoch=best_epoch, dir=dir, model_name=model_name)
         if os.path.exists(prev_best_epoch_file):
             os.remove(prev_best_epoch_file)
 
         best_f1 = metrics['accuracy']
         best_epoch = epoch
-        best_epoch_file = get_saved_model_path(epoch=best_epoch,dir=dir,model_name=model_name)
+        best_epoch_file = get_saved_model_path(epoch=best_epoch, dir=dir, model_name=model_name)
         print(f'\nEpoch: {best_epoch} - New best accuracy! accuracy: {best_f1}\n\n\n')
         torch.save(model.state_dict(), best_epoch_file)
