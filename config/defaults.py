@@ -35,9 +35,9 @@ _C.INPUT.MAX_SCALE_TRAIN = 1.2
 # Random probability for image.jpg horizontal flip
 _C.INPUT.PROB = 0.5
 # Values to be used for image.jpg normalization
-_C.INPUT.PIXEL_MEAN = [0.5071, 0.4865, 0.4409]
+_C.INPUT.PIXEL_MEAN = [0.4914, 0.4822, 0.4465]
 # Values to be used for image.jpg normalization
-_C.INPUT.PIXEL_STD = [0.2673, 0.2564, 0.2762]
+_C.INPUT.PIXEL_STD = [0.2023, 0.1994, 0.2010]
 # -----------------------------------------------------------------------------
 # Dataset
 # -----------------------------------------------------------------------------
@@ -89,7 +89,7 @@ _C.OPT.ADADELTA.WEIGHT_DECAY = 1e-5  # DEFAULT 0
 # ---------------------------------------------------------------------------- #
 _C.SOLVER = CN()
 
-_C.SOLVER.MAX_EPOCHS = 50
+_C.SOLVER.MAX_EPOCHS = 10
 
 _C.SOLVER.CHECKPOINT_PERIOD = 10
 _C.SOLVER.LOG_PERIOD = 100
@@ -97,7 +97,7 @@ _C.SOLVER.LOG_PERIOD = 100
 # Number of images per batch
 # This is global, so if we have 8 GPUs and IMS_PER_BATCH = 16, each GPU will
 # see 2 images per batch
-_C.SOLVER.IMS_PER_BATCH = 64
+_C.SOLVER.IMS_PER_BATCH = 400
 
 # This is global, so if we have 8 GPUs and IMS_PER_BATCH = 16, each GPU will
 # see 2 images per batch

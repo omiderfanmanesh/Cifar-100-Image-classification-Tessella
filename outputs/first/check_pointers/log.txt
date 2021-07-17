@@ -1,3 +1,1 @@
-2021-07-17 09:13:16,916 template_model INFO: Using 1 GPUS
-2021-07-17 09:13:19,026 template_model.train INFO: Start training
-2021-07-17 09:13:20,858 template_model.train INFO: Epoch[1] Iteration[100/3125] Loss: 8.82
+2021-07-17 12:33:26,373 template_model INFO: Using 1 GPUS
